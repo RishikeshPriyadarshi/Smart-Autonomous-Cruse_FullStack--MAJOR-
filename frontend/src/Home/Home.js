@@ -184,6 +184,7 @@ const Home = ({setShowHome,setSignup,setLogged}) => {
     }
     
     const handleLogout = () => {
+        localStorage.removeItem("UserIdMajor")
         setShowHome(false);
         setSignup(false);
         setLogged(true);

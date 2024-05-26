@@ -1,90 +1,3 @@
-// import React, { useState } from 'react';
-// import { TextField, Button, Typography, Container } from '@mui/material';
-
-// const SignupPage = ({setLogged,setSignup}) => {
-//     const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({ ...formData, [name]: value });
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         // Add your signup logic here
-//         console.log('Submitted:', formData);
-//     };
-//     const handleGoToLogin=()=>{
-//         setLogged(true)
-//         setSignup(false)
-//     }
-//     return (
-//         <Container maxWidth="xs">
-//             <Typography variant="h4" align="center" gutterBottom>
-//                 Sign Up
-//             </Typography>
-//             <form onSubmit={handleSubmit}>
-//                 <TextField
-//                     variant="outlined"
-//                     margin="normal"
-//                     fullWidth
-//                     id="username"
-//                     label="Username"
-//                     name="username"
-//                     autoComplete="username"
-//                     autoFocus
-//                     value={formData.username}
-//                     onChange={handleChange}
-//                 />
-//                 <TextField
-//                     variant="outlined"
-//                     margin="normal"
-//                     fullWidth
-//                     id="email"
-//                     label="Email Address"
-//                     name="email"
-//                     autoComplete="email"
-//                     value={formData.email}
-//                     onChange={handleChange}
-//                 />
-//                 <TextField
-//                     variant="outlined"
-//                     margin="normal"
-//                     fullWidth
-//                     name="password"
-//                     label="Password"
-//                     type="password"
-//                     id="password"
-//                     autoComplete="new-password"
-//                     value={formData.password}
-//                     onChange={handleChange}
-//                 />
-//                 <Button
-//                     type="submit"
-//                     fullWidth
-//                     variant="contained"
-//                     color="primary"
-//                     size="large"
-//                     sx={{ mt: 2 }}
-//                 >
-//                     Sign Up
-//                 </Button>
-//             </form>
-//             <Button
-//         onClick={handleGoToLogin}
-//         fullWidth
-//         variant="contained"
-//         color="primary"
-//         size="large"
-//         sx={{ mt: 2 }}
-//       >
-//         Go to Login
-//       </Button>
-//         </Container>
-//     );
-// };
-
-// export default SignupPage;
 import React, { useState } from "react";
 import {
   TextField,
@@ -103,6 +16,7 @@ const SignupPage = ({ setLogged, setSignup, setShowHome }) => {
     password: "",
     confirmPassword: "",
   });
+  const [rememberMe,setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -116,15 +30,29 @@ const SignupPage = ({ setLogged, setSignup, setShowHome }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await signup(formData);
-    console.log("signup data",result);
+    
     if (formData.password !== formData.confirmPassword) {
       // If they don't match, display an error message or handle it as needed
       console.error("Password and confirm password do not match");
       return;
     }
+    if(formData.name==='' && formData.password === ''){
+      return;
+    }
+    let result
+    try{
+    result = await signup(formData);
+    console.log("signup data",result);
+    }catch(error){
+      console.log("user not found");
+      return;
+    }
     if (result.data.success) {
       // Update the logged state to true
+      console.log("new user ------ ",result.data.newUser._id)
+      if(rememberMe){
+      localStorage.setItem("UserIdMajor",result.data.newUser._id);
+      }
       setSignup(false);
       setShowHome(true);
     } else {
@@ -199,6 +127,8 @@ const SignupPage = ({ setLogged, setSignup, setShowHome }) => {
             ),
           }}
         />
+        <label htmlFor="checkbox">Remember Me</label>
+          <input type="checkbox" id="remember me" onChange={(e)=>setRememberMe(!rememberMe)} style={{width:20,height:20}}/>
         <Button
           type="submit"
           fullWidth

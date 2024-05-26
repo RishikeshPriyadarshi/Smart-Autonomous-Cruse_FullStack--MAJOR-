@@ -21,7 +21,7 @@ export const Login = async (req, res) => {
         }
 
         if (oldUser.password === password) {
-            return res.status(200).json({ success: true, message: "User found" });
+            return res.status(200).json({ success: true, message: "User found" , oldUser});
         } else {
             return res.status(401).json({ message: "Invalid password" });
         }
